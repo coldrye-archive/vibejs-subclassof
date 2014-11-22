@@ -20,6 +20,9 @@
         "assert"
     ],
     "main" : "./src/index.coffee",
+    "scripts" : {
+        "test" : "grunt test"
+    },
     "dependencies" : {
         "coffee-script" : ">=1.8.0"
     },
