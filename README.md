@@ -1,5 +1,6 @@
 # vibejs-subclassof
 
+[![Build Status](https://travis-ci.org/vibejs/vibejs-subclassof.svg?branch=master)](https://travis-ci.org/vibejs/vibejs-subclassof)
 
 ## Introduction
 
