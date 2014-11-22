@@ -2,7 +2,7 @@
     "name" : "vibejs-subclassof",
     "version" : "0.0.1",
     "description" : "adds subclassof() function and assert macro for testing class inheritance",
-    "author" : "Carsten Klein <trancesilken@gmail.com>",
+    "author" : "vibejs <github.vibejs@gmail.com>",
     "license" : "Apache License 2.0",
     "bugs" : {
         "url" : "https://github.com/vibejs/vibejs-subclassof/issues"
