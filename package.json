@@ -11,6 +11,7 @@
         "type" : "git",
         "url" : "https://github.com/vibejs/vibejs-subclassof.git"
     },
+    "homepage": "https://github.com/vibejs/vibejs-subclassof",
     "keywords" : [
         "runtime",
         "class",
