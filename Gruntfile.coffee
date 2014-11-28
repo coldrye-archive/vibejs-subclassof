@@ -5,13 +5,14 @@ semver = require('semver').parse
 # we do not want the below grunt tasks to show up
 # in our task list
 
-gruntvows = require 'grunt-vows/tasks/vows'
-gruntchangelog = require 'grunt-changelog/tasks/changelog'
-gruntcontribcopy = require 'grunt-contrib-copy/tasks/copy'
-gruntcontribuglify = require 'grunt-contrib-uglify/tasks/uglify'
-gruntistanbul = require 'grunt-istanbul/tasks/istanbul'
-gruntcoffee = require 'grunt-contrib-coffee/tasks/coffee'
-
+lateBoundNpmTasks = [
+    'grunt-vows'
+    'grunt-changelog'
+    'grunt-contrib-copy'
+    'grunt-contrib-uglify'
+    'grunt-contrib-coffee'
+    'grunt-istanbul'
+]
 
 latebound = false
 
@@ -19,14 +20,9 @@ latebind = (grunt) ->
 
     if not latebound
 
-        gruntvows grunt
-        gruntchangelog grunt
-        gruntcontribcopy grunt
-        gruntcontribuglify grunt
-        gruntistanbul grunt
-        gruntcoffee grunt
+        for task in lateBoundNpmTasks
 
-        latebound = true
+            grunt.loadNpmTasks task
 
         grunt.registerTask 'assemble-npm', 'assembles the npm package (./build/npm)', ->
 
@@ -52,7 +48,7 @@ latebind = (grunt) ->
                 grunt.file.copy './build/javascript/src/' + path, target + path
 
             # copy documentation
-            for path in ['README.md', 'LICENSE']
+            for path in ['README.md', 'LICENSE', 'CHANGELOG']
 
                 grunt.file.copy './' + path, target + path
 
@@ -94,9 +90,39 @@ latebind = (grunt) ->
             grunt.file.write target + 'package.js', content
 
             # copy documentation
-            for path in ['README.md', 'LICENSE']
+            for path in ['README.md', 'LICENSE', 'CHANGELOG']
 
                 grunt.file.copy './' + path, target + path
+
+        latebound = true
+
+
+determinePreviousTag = (grunt, tag, callback) ->
+
+    grunt.util.spawn { cmd : 'git', args : ['tag'] }, (error, result) ->
+
+        if error
+
+            grunt.fail.fatal(error)
+
+        tags = result.toString().split('\n')
+
+        index = tags.indexOf(tag)
+
+        previousTag = null
+        if index > 0
+
+            previousTag = tags[index - 1]
+
+        callback previousTag
+
+
+changelogBuildPartial = (collectionName, entryName, title) ->
+
+    return "{{#if #{collectionName}}}#{title}:\n\n{{#each #{collectionName}}}{{> #{entryName}}}{{/each}}\n{{/if}}"
+
+
+changelogEntryPartial = ' - {{this}}\n'
 
 
 module.exports = (grunt) ->
@@ -143,6 +169,37 @@ module.exports = (grunt) ->
                 src : ['./src/**/*.coffee', './test/**/*.coffee']
                 dest : './build/javascript'
                 ext : '.js'
+
+        changelog :
+
+            default :
+
+                options :
+
+                    others : true
+
+                    dest : 'CHANGELOG'
+
+                    insertType : 'prepend'
+
+                    sections :
+
+                        apichanges : /^\s*- changed (#\d+):?(.*)$/i
+                        deprecations : /^\s*- deprecated (#\d+):?(.*)$/i
+                        features : /^\s*- feature (#\d+):?(.*)$/i
+                        fixes : /^\s*- fixes (#\d+):?(.*)$/i
+                        others : /^\s*- (.*)$/
+
+                    template : 'Release v<%= pkg.version %> ({{date}})\n\n{{> features }}{{> fixes }}{{> apichanges }}{{> deprecations }}{{> others }}' 
+
+                    partials :
+
+                        entry : changelogEntryPartial
+                        apichanges : changelogBuildPartial 'apichanges', 'entry', 'API Changes'
+                        deprecations : changelogBuildPartial 'deprecations', 'entry', 'Deprecated'
+                        features : changelogBuildPartial 'features', 'entry', 'New Features'
+                        fixes : changelogBuildPartial 'fixes', 'entry', 'Bug Fixes'
+                        others : changelogBuildPartial 'others', 'entry', 'Miscellaneous'
 
         meteor:
 
@@ -277,4 +334,34 @@ module.exports = (grunt) ->
         'clean', 'build-javascript', 'coverage', 'test', 
         'build-uglified', 'package-npm', 'package-meteor'
     ]
+
+    grunt.registerTask 'update-changelog', (after, before) ->
+
+        latebind grunt
+
+        changelogTask = 'changelog:default'
+
+        if after
+
+            grunt.task.run "#{changelogTask}:#{after}:#{before}"
+
+        else
+
+            done = this.async()
+
+            pkg = grunt.config.get 'pkg'
+            tag = "v#{pkg.version}"
+            determinePreviousTag grunt, tag, (previousTag) ->
+
+                if previousTag is null
+
+                    changelogTask += ":commit:#{tag}"
+
+                else
+
+                    changelogTask += ":#{previousTag}:#{tag}"
+
+                grunt.task.run changelogTask
+
+                done()
 

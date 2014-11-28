@@ -1,0 +1,9 @@
+Release v0.0.1 (2014-11-28)
+
+Miscellaneous:
+
+ - updated package.json
+ - corrected email address in package manifest
+ - importing existing sources
+ - starting from scratch as vibe- prefix was already used
+
