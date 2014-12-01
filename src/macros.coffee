@@ -27,12 +27,15 @@ else
     require './subclassof'
 
 
-assert.subclassOf = (actual, expected, message) ->
+# guard preventing us from installing twice
+unless assert.subclassOf?
 
-    if not subclassof actual, expected
+    assert.subclassOf = (actual, expected, message) ->
 
-        actualName = actual?.name || actual
-        expectedName = expected?.name || expected
+        if not subclassof actual, expected
 
-        assert.fail actual, expected, message || "expected #{actualName} to be a subclass of #{expectedName}", "subclassof", assert.subclassOf
+            actualName = actual?.name || actual
+            expectedName = expected?.name || expected
+
+            assert.fail actual, expected, message || "expected #{actualName} to be a subclass of #{expectedName}", "subclassof", assert.subclassOf
 

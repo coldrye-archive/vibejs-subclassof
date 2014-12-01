@@ -21,10 +21,13 @@
 
 # Standard Exceptions
 
-EvalError.super_ = Error
-RangeError.super_ = Error
-ReferenceError.super_ = Error
-SyntaxError.super_ = Error
-TypeError.super_ = Error
-URIError.super_ = Error
+# guard preventing us from installing twice
+unless EvalError.super_?
+
+    EvalError.super_ = Error
+    RangeError.super_ = Error
+    ReferenceError.super_ = Error
+    SyntaxError.super_ = Error
+    TypeError.super_ = Error
+    URIError.super_ = Error
 

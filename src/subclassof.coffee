@@ -19,85 +19,88 @@
 exports = window ? global
 
 
-_subclassofCoffee = (constructor, base) ->
+# guard preventing us from installing twice
+unless exports.subclassof?
 
-    result = false
+    _subclassofCoffee = (constructor, base) ->
 
-    b = constructor.__super__.constructor
-    while true
+        result = false
 
-        if b == base
+        b = constructor.__super__.constructor
+        while true
 
+            if b == base
+
+                result = true
+                break
+
+            if b.__super__ is undefined
+
+                break
+
+            b = b.__super__.constructor
+     
+        if not result && b.super_
+
+            result = _subclassofNode b, base
+
+        result
+
+
+
+    _subclassofNode = (constructor, base) ->
+
+        result = false
+
+        b = constructor.super_
+        while true
+
+            if b == base
+
+                result = true
+                break
+
+            if b.__super__
+
+                break
+
+            if b.super_ is undefined
+
+                break
+
+            b = b.super_
+
+        if not result && b.__super__
+
+            result = _subclassofCoffee b, base
+
+        result
+
+
+    exports.subclassof = (constructor, base) ->
+
+        result = false
+
+        if 'function' != typeof constructor
+
+            throw new TypeError 'constructor must be a function.'
+
+        if 'function' != typeof base
+
+            throw new TypeError 'base must be a function.'
+
+        if base == Object
+
+            # everything is a subclass of Object
             result = true
-            break
 
-        if b.__super__ is undefined
+        else if constructor.__super__
 
-            break
+            result = _subclassofCoffee constructor, base
 
-        b = b.__super__.constructor
- 
-    if not result && b.super_
+        else if constructor.super_
 
-        result = _subclassofNode b, base
+            result = _subclassofNode constructor, base
 
-    result
-
-
-
-_subclassofNode = (constructor, base) ->
-
-    result = false
-
-    b = constructor.super_
-    while true
-
-        if b == base
-
-            result = true
-            break
-
-        if b.__super__
-
-            break
-
-        if b.super_ is undefined
-
-            break
-
-        b = b.super_
-
-    if not result && b.__super__
-
-        result = _subclassofCoffee b, base
-
-    result
-
-
-exports.subclassof = (constructor, base) ->
-
-    result = false
-
-    if 'function' != typeof constructor
-
-        throw new TypeError 'constructor must be a function.'
-
-    if 'function' != typeof base
-
-        throw new TypeError 'base must be a function.'
-
-    if base == Object
-
-        # everything is a subclass of Object
-        result = true
-
-    else if constructor.__super__
-
-        result = _subclassofCoffee constructor, base
-
-    else if constructor.super_
-
-        result = _subclassofNode constructor, base
-
-    result
+        result
 
