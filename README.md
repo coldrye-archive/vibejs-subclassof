@@ -7,10 +7,13 @@
 *subclassof* provides you with the ability to test a given constructor function for
 being a subclass of another constructor function.
 
+This works with both CoffeeScript and standard Node.js inheritance models and most
+provably with any of the available CoffeeScript dialects out there.
+
 
 ### Features
 
- - support for mixed inheritance models, namely *node* and *coffee-script*
+ - support for mixed inheritance models, namely *Node.js* and *CoffeeScript*
  - runs in the browser and supports browserify
  - optional assert.subclassOf macro
  - NPM package
@@ -94,7 +97,7 @@ You can install subclassof using meteor.
 
     if Meteor.isClient()
 
-        window.alert subclassof TypeError, error
+        window.alert subclassof TypeError, Error
 
     else
 
