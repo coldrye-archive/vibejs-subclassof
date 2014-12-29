@@ -165,7 +165,7 @@ module.exports = (grunt) ->
                     silent: false
                     colors: true 
                     # somehow, isolate will not work
-                    isolate: false
+                    isolate: true 
                     coverage: 'json'
 
                 src: ['./test/*.coffee']
@@ -179,7 +179,7 @@ module.exports = (grunt) ->
                     verbose: false
                     silent: false
                     colors: true 
-                    isolate: false
+                    isolate: true
                     coverage: 'html'
 
                 src: ['./build/coverage/test/*.coffee']
