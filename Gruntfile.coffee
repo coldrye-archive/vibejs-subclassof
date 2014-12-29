@@ -272,20 +272,22 @@ module.exports = (grunt) ->
 
         latebind grunt
 
+        grunt.task.run 'clean:javascript'
+        grunt.task.run 'clean:npm'
         grunt.task.run 'test'
         grunt.task.run 'build-javascript'
         #grunt.task.run 'build-uglified'
-        grunt.task.run 'clean-npm'
         grunt.task.run 'assemble-npm'
 
     grunt.registerTask 'package-meteor', 'assemble meteor package (./build/meteor)', ->
 
         latebind grunt
 
+        grunt.task.run 'clean:javascript'
+        grunt.task.run 'clean:meteor'
         grunt.task.run 'test'
         grunt.task.run 'build-javascript:bare'
         #grunt.task.run 'build-uglified'
-        grunt.task.run 'clean-meteor'
         grunt.task.run 'assemble-meteor'
 
     grunt.registerTask 'publish-npm', 'publish npm package', ->
