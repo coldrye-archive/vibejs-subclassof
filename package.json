@@ -1,6 +1,6 @@
 {
     "name": "vibejs-subclassof",
-    "version": "0.0.3",
+    "version": "1.0.0",
     "description": "adds subclassof() function and assert macro for testing class inheritance",
     "author": "vibejs <github.vibejs@gmail.com>",
     "license": "Apache License 2.0",
