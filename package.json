@@ -36,7 +36,7 @@
         "grunt-coffee-coverage": ">=0.1.5",
         "semver": ">=4.1.0",
         "grunt-vows": ">=0.4.1",
-        "grunt-changelog": "vibejs/grunt-changelog",
+        "grunt-changelog": "vibejs/grunt-changelog#gh-24",
         "vows": "vibejs/vows"
     }
 }
